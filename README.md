@@ -37,6 +37,7 @@ EEFFGG.
 I did some quick benchmarks. Here's the results!
 
 | Map		| Naive			| Bitwise		|
+| --------- | ------------- | ------------- |
 | test_8	| 0.03s			| 0.01s			|
 | test_11	| 33.08s		| 7.01s			|
 
