@@ -6,7 +6,7 @@
 #    By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/05 02:12:10 by pbondoer          #+#    #+#              #
-#    Updated: 2016/02/08 17:42:07 by pbondoer         ###   ########.fr        #
+#    Updated: 2016/03/06 04:39:29 by pbondoer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,6 @@ NAME	= fillit
 
 SRC		= main.c \
 		  reader.c \
-		  tetrimino.c \
-		  map.c \
 		  solver.c
 
 OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))

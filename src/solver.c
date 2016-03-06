@@ -6,77 +6,57 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 15:19:32 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/02/12 13:52:08 by pbondoer         ###   ########.fr       */
+/*   Updated: 2016/03/06 06:52:20 by pbondoer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include "libft.h"
 #include "fillit.h"
+#include <stdio.h>
 
 /*
 ** Backtracking implementation of the solver.
 */
 
-int		solve_map(t_map *map, t_list *list)
+int		solve_map(t_etris *tetris, int size, short *map)
 {
-	int			x;
-	int			y;
-	t_etris		*tetri;
-
-	if (list == NULL)
+	if (tetris->id == 0)
 		return (1);
-	y = 0;
-	tetri = (t_etris *)(list->content);
-	while (y < map->size - tetri->height + 1)
+	tetris->y = 0;
+	while (tetris->y <= size - tetris->height)
 	{
-		x = 0;
-		while (x < map->size - tetri->width + 1)
+		tetris->x = 0;
+		while (tetris->x <= size - tetris->width)
 		{
-			if (place(tetri, map, x, y))
+			if ((*(t_long *)(map + tetris->y) & (tetris->value >> tetris->x)) == 0)
 			{
-				if (solve_map(map, list->next))
+				*(t_long *)(map + tetris->y) ^= tetris->value >> tetris->x;
+				if (solve_map(tetris + 1, size, map))
 					return (1);
-				else
-					set_piece(tetri, map, point_new(x, y), '.');
+				*(t_long *)(map + tetris->y) ^= tetris->value >> tetris->x;
 			}
-			x++;
+			tetris->x++;
 		}
-		y++;
+		tetris->y++;
 	}
 	return (0);
-}
-
-/*
-** Gets the rounded up sqrt of a number. Equivalent to ceil(sqrt(n)).
-*/
-
-int		high_sqrt(int n)
-{
-	int size;
-
-	size = 2;
-	while (size * size < n)
-		size++;
-	return (size);
 }
 
 /*
 ** Tries to solve maps starting from the smallest possible size.
 */
 
-t_map	*solve(t_list *list)
+int		solve(t_etris *tetris, int count, short *map)
 {
-	t_map	*map;
 	int		size;
-
-	size = high_sqrt(ft_lstcount(list) * 4);
-	map = map_new(size);
-	while (!solve_map(map, list))
-	{
+	size = 2;
+	while (size * size < count * 4)
 		size++;
-		free_map(map);
-		map = map_new(size);
+	while (!solve_map(tetris, size, map) && size <= 16)
+	{
+		ft_bzero(map, sizeof(short) * 16);
+		size++;
 	}
-	return (map);
+	return (size == 17 ? 0 : size);
 }
