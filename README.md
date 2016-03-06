@@ -34,7 +34,7 @@ EEFFGG.
 ```
 
 ## Benchmark
-I did some quick benchmarks. Here's the results!
+I did some quick benchmarks. Here are the results!
 
 | Map		| Naive			| Bitwise		|
 | --------- | ------------- | ------------- |
