@@ -6,7 +6,7 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/15 17:41:37 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/03/06 06:39:30 by pbondoer         ###   ########.fr       */
+/*   Updated: 2016/03/06 07:14:55 by pbondoer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,18 @@
 #include "fillit.h"
 #include <stdio.h>
 
-void	printbits(t_long v)
+/*
+** Allocates an empty map string to populate with our pieces.
+*/
+
+char	*empty_map(int size)
 {
-	int i;
+	char	*str;
+	int		x;
+	int		y;
 
-	i = sizeof(t_long) * 8 - 1;
-	while (i >= 0)
-	{
-		ft_putchar('0' + ((v >> i) & 1));
-		if (i % 4 == 0) ft_putchar(' ');
-		if (i % 16 == 0) ft_putchar('\n');
-		i--;
-	}
-}
-
-void	print(t_etris *tetris, int count)
-{
-	char *buf;
-	int x;
-	int y;
-	int size;
-
-	size = 16;
+	str = ft_strnew((size + 1) * (size));
 	y = 0;
-	buf = ft_strnew((size + 1) * (size + 1));
 	while (y < size)
 	{
 		x = 0;
@@ -50,26 +38,41 @@ void	print(t_etris *tetris, int count)
 		buf[y * (size + 1) + x] = '\n';
 		y++;
 	}
+	return (str);
+}
+
+/*
+** Displays a map as resolved by the program.
+*/
+
+void	print(t_etris *t, int count, int size)
+{
+	char	*str;
+	int		x;
+	int		y;
+
+	str = empty_map(size);
 	while (count > 0)
 	{
-		printf("%c: %d, %d\n", tetris->id, tetris->x, tetris->y);
 		y = 0;
-		while (y < tetris->height)
+		while (y < t->height)
 		{
 			x = 0;
-			while (x < tetris->width)
+			while (x < t->width)
 			{
-				if ((tetris->value >> (16 * (y + 1) - 1 - x)) & 1)
-					buf[(tetris->y + y) * (size + 1) + x + tetris->x] = tetris->id;
+				if ((t->value >> (16 * (y + 1) - 1 - x)) & 1)
+					buf[(t->y + y) * (size + 1) + x + t->x] = t->id;
 				x++;
 			}
 			y++;
 		}
-		tetris++;
+		t++;
 		count--;
 	}
-	ft_putstr(buf);
+	ft_putstr(str);
+	ft_strdel(&str);
 }
+
 /*
 ** Utility die function
 */
@@ -89,6 +92,7 @@ int		main(int argc, char **argv)
 	t_etris		tetris[MAX_TETRI + 1];
 	short		map[16];
 	int			count;
+	int			size;
 
 	if (argc != 2)
 		return (die("usage: fillit input_file"));
@@ -96,7 +100,8 @@ int		main(int argc, char **argv)
 	if ((count = read_tetri(open(argv[1], O_RDONLY), tetris)) == 0)
 		return (die("error"));
 	ft_bzero(map, sizeof(short) * 16);
-	solve(tetris, count, map);
-	print(tetris, count);
+	if ((size = solve(tetris, count, map)) == 0)
+		return (die("error"));
+	print(tetris, count, size);
 	return (0);
 }

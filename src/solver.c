@@ -6,7 +6,7 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 15:19:32 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/03/06 06:52:20 by pbondoer         ###   ########.fr       */
+/*   Updated: 2016/03/06 07:01:11 by pbondoer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int		solve_map(t_etris *tetris, int size, short *map)
 		tetris->x = 0;
 		while (tetris->x <= size - tetris->width)
 		{
-			if ((*(t_long *)(map + tetris->y) & (tetris->value >> tetris->x)) == 0)
+			if (!(*(t_long *)(map + tetris->y) & (tetris->value >> tetris->x)))
 			{
 				*(t_long *)(map + tetris->y) ^= tetris->value >> tetris->x;
 				if (solve_map(tetris + 1, size, map))
@@ -50,6 +50,7 @@ int		solve_map(t_etris *tetris, int size, short *map)
 int		solve(t_etris *tetris, int count, short *map)
 {
 	int		size;
+
 	size = 2;
 	while (size * size < count * 4)
 		size++;
