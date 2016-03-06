@@ -6,72 +6,83 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/15 17:43:27 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/02/09 16:53:44 by pbondoer         ###   ########.fr       */
+/*   Updated: 2016/03/06 04:14:11 by pbondoer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include "libft.h"
 #include "fillit.h"
+#include <stdio.h>
 
 /*
 ** Utility function to get min-max values for get_piece.
+** pos is a 4 dimensional array encoded as: xMin 0, xMax 1, yMin 2, yMax 3
 */
 
-void	min_max(char *str, t_point *min, t_point *max)
+void	min_max(char *str, char *m)
 {
-	int i;
+	unsigned char i;
 
 	i = 0;
+	m[0] = 3;
+	m[1] = 0;
+	m[2] = 3;
+	m[3] = 0;
 	while (i < 20)
 	{
 		if (str[i] == '#')
 		{
-			if (i / 5 < min->y)
-				min->y = i / 5;
-			if (i / 5 > max->y)
-				max->y = i / 5;
-			if (i % 5 < min->x)
-				min->x = i % 5;
-			if (i % 5 > max->x)
-				max->x = i % 5;
+			if (i % 5 < m[0])
+				m[0] = i % 5;
+			if (i % 5 > m[1])
+				m[1] = i % 5;
+			if (i / 5 < m[2])
+				m[2] = i / 5;
+			if (i / 5 > m[3])
+				m[3] = i / 5;
 		}
 		i++;
 	}
 }
 
 /*
-** Reads a piece from a valid chunk, allocates a structure and populates it.
+** Reads a piece from a valid chunk and puts that in the t_etris structure.
 */
 
-t_etris	*get_piece(char *str, char value)
+t_etris	get_piece(char *str, char id)
 {
-	t_point		*mi;
-	t_point		*max;
-	char		**pos;
-	int			i;
-	t_etris		*tetri;
+	t_etris	tetris;
+	char	m[4];
+	int		x;
+	int		y;
 
-	mi = point_new(3, 3);
-	max = point_new(0, 0);
-	min_max(str, mi, max);
-	pos = ft_memalloc(sizeof(char *) * (max->y - mi->y + 1));
-	i = 0;
-	while (i < max->y - mi->y + 1)
+	min_max(str, &(m[0]));
+	tetris.width = m[1] - m[0] + 1;
+	tetris.height = m[3] - m[2] + 1;
+	tetris.id = id;
+	tetris.value = 0;
+	tetris.x = 0;
+	tetris.y = 0;
+	y = 0;
+	while (y < tetris.height)
 	{
-		pos[i] = ft_strnew(max->x - mi->x + 1);
-		ft_strncpy(pos[i], str + (mi->x) + (i + mi->y) * 5, max->x - mi->x + 1);
-		i++;
+		x = 0;
+		while (x < tetris.width)
+		{
+			if (str[(m[0] + x) + (m[2] + y) * 5] == '#')
+				tetris.value |= (1L << (16 * (4 - y) - 1 - x));
+			x++;
+		}
+		y++;
 	}
-	tetri = tetris_new(pos, max->x - mi->x + 1, max->y - mi->y + 1, value);
-	ft_memdel((void **)&mi);
-	ft_memdel((void **)&max);
-	return (tetri);
+	return (tetris);
 }
 
 /*
 ** Checks connection counts, if we have 6 or 8 connections, the tetrimino is
 ** valid. Otherwise, our tetrimino is not contiguous.
+** (This of course assumes we know this tetrimino has only 4 blocks)
 */
 
 int		check_connection(char *str)
@@ -131,36 +142,26 @@ int		check_counts(char *str, int count)
 }
 
 /*
-** Read tetriminos from fd and put them in a list.
+** Read tetriminos from fd and put them in our tetrimino array.
 ** We use 21 sized reads to read piece by piece since there are
 ** 4 lines made of 4 chars (+ newline) = 20 chars + sep. newline = 21 chars
+** (don't forget that \0)
 */
 
-t_list	*read_tetri(int fd)
+int		read_tetri(int fd, t_etris *tetris)
 {
-	char	*buf;
+	char	buf[22];
 	int		count;
-	t_list	*list;
-	t_etris	*tetris;
 	char	cur;
 
-	buf = ft_strnew(21);
-	list = NULL;
 	cur = 'A';
 	while ((count = read(fd, buf, 21)) >= 20)
 	{
-		if (check_counts(buf, count) != 0
-				|| (tetris = get_piece(buf, cur++)) == NULL)
-		{
-			ft_memdel((void **)&buf);
-			return (free_list(list));
-		}
-		ft_lstadd(&list, ft_lstnew(tetris, sizeof(t_etris)));
-		ft_memdel((void **)&tetris);
+		if (check_counts(buf, count) != 0)
+			return (1);
+		*(tetris++) = get_piece(buf, cur++);
 	}
-	ft_memdel((void **)&buf);
 	if (count != 0)
-		return (free_list(list));
-	ft_lstrev(&list);
-	return (list);
+		return (1);
+	return (0);
 }
