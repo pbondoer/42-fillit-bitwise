@@ -32,10 +32,10 @@ char	*empty_map(int size)
 		x = 0;
 		while (x < size)
 		{
-			buf[y * (size + 1) + x] = '.';
+			str[y * (size + 1) + x] = '.';
 			x++;
 		}
-		buf[y * (size + 1) + x] = '\n';
+		str[y * (size + 1) + x] = '\n';
 		y++;
 	}
 	return (str);
@@ -61,7 +61,7 @@ void	print(t_etris *t, int count, int size)
 			while (x < t->width)
 			{
 				if ((t->value >> (16 * (y + 1) - 1 - x)) & 1)
-					buf[(t->y + y) * (size + 1) + x + t->x] = t->id;
+					str[(t->y + y) * (size + 1) + x + t->x] = t->id;
 				x++;
 			}
 			y++;
