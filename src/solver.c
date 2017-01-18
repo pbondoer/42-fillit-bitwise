@@ -6,35 +6,55 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 15:19:32 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/03/06 07:01:11 by pbondoer         ###   ########.fr       */
+/*   Updated: 2017/01/18 00:57:29 by lemon            ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/* ****************************************************************************/
 
 #include <string.h>
 #include "libft.h"
 #include "fillit.h"
-#include <stdio.h>
+
+/*
+** Checks for a piece
+*/
+
+inline int	check_piece(const t_etris *tetris, uint16_t *map)
+{
+	return (!(*(uint64_t *)(map + tetris->y) & (tetris->value >> tetris->x)));
+}
+
+/*
+** Switches off a piece
+*/
+
+inline void	toggle_piece(const t_etris *tetris, uint16_t *map)
+{
+	*(uint64_t *)(map + tetris->y) ^= tetris->value >> tetris->x;
+}
 
 /*
 ** Backtracking implementation of the solver.
 */
 
-int		solve_map(t_etris *tetris, int size, short *map)
+int			solve_map(t_etris *tetris, const int size, uint16_t *map)
 {
+	int pos;
+
 	if (tetris->id == 0)
 		return (1);
-	tetris->y = 0;
+	pos = (tetris->last ? (tetris->last->x + tetris->last->y * size + 1) : 0);
+	tetris->y = pos / size;
 	while (tetris->y <= size - tetris->height)
 	{
-		tetris->x = 0;
+		tetris->x = pos % size;
 		while (tetris->x <= size - tetris->width)
 		{
-			if (!(*(t_long *)(map + tetris->y) & (tetris->value >> tetris->x)))
+			if (check_piece(tetris, map))
 			{
-				*(t_long *)(map + tetris->y) ^= tetris->value >> tetris->x;
+				toggle_piece(tetris, map);
 				if (solve_map(tetris + 1, size, map))
 					return (1);
-				*(t_long *)(map + tetris->y) ^= tetris->value >> tetris->x;
+				toggle_piece(tetris, map);
 			}
 			tetris->x++;
 		}
@@ -44,10 +64,10 @@ int		solve_map(t_etris *tetris, int size, short *map)
 }
 
 /*
-** Tries to solve maps starting from the smallest possible size.
+* Tries to solve maps starting from the smallest possible size.
 */
 
-int		solve(t_etris *tetris, int count, short *map)
+int			solve(t_etris *tetris, const int count, uint16_t *map)
 {
 	int		size;
 
@@ -56,7 +76,7 @@ int		solve(t_etris *tetris, int count, short *map)
 		size++;
 	while (!solve_map(tetris, size, map) && size <= 16)
 	{
-		ft_bzero(map, sizeof(short) * 16);
+		ft_bzero(map, sizeof(uint16_t) * 16);
 		size++;
 	}
 	return (size == 17 ? 0 : size);

@@ -6,10 +6,9 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/15 17:43:27 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/03/06 06:38:34 by pbondoer         ###   ########.fr       */
+/*   Updated: 2017/01/18 00:56:15 by lemon            ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
-
+/* ************************************************************************** */ 
 #include <unistd.h>
 #include "libft.h"
 #include "fillit.h"
@@ -20,13 +19,12 @@
 ** pos is a 4 dimensional array encoded as: xMin 0, xMax 1, yMin 2, yMax 3
 */
 
-void	min_max(char *str, char *m)
+void	min_max(const char *str, char *m)
 {
 	unsigned char i;
 
 	i = 0;
-	m[0] = 3;
-	m[1] = 0;
+	m[0] = 3; m[1] = 0;
 	m[2] = 3;
 	m[3] = 0;
 	while (i < 20)
@@ -50,7 +48,7 @@ void	min_max(char *str, char *m)
 ** Reads a piece from a valid chunk and puts that in the t_etris structure.
 */
 
-t_etris	get_piece(char *str, char id)
+t_etris	get_piece(const char *str, const char id)
 {
 	t_etris	tetris;
 	char	m[4];
@@ -83,7 +81,7 @@ t_etris	get_piece(char *str, char id)
 ** (This of course assumes we know this tetrimino has only 4 blocks)
 */
 
-int		check_connection(char *str)
+int		check_connection(const char *str)
 {
 	int block;
 	int i;
@@ -112,12 +110,12 @@ int		check_connection(char *str)
 ** Checks character counts and that chunk format is valid.
 */
 
-int		check_counts(char *str, int count)
+int		check_counts(const char *str, const int count)
 {
 	int i;
-	int blocs;
+	int blocks;
 
-	blocs = 0;
+	blocks = 0;
 	i = 0;
 	while (i < 20)
 	{
@@ -125,7 +123,7 @@ int		check_counts(char *str, int count)
 		{
 			if (!(str[i] == '#' || str[i] == '.'))
 				return (1);
-			if (str[i] == '#' && ++blocs > 4)
+			if (str[i] == '#' && ++blocks > 4)
 				return (2);
 		}
 		else if (str[i] != '\n')
@@ -146,18 +144,29 @@ int		check_counts(char *str, int count)
 ** (don't forget that \0)
 */
 
-int		read_tetri(int fd, t_etris *tetris)
+int		read_tetri(const int fd, t_etris *tetris)
 {
 	char	buf[22];
 	int		count;
+	int		i;
+	int		j;
 	char	cur;
 
 	cur = 'A';
+	i = 0;
 	while ((count = read(fd, buf, 21)) >= 20)
 	{
 		if (check_counts(buf, count) != 0)
 			return (1);
-		*(tetris++) = get_piece(buf, cur++);
+		tetris[i] = get_piece(buf, cur++);
+		j = i - 1;
+		while (j >= 0)
+		{
+			if (tetris[j].value == tetris[i].value)
+				tetris[i].last = tetris + j;
+			j--;
+		}
+		i++;
 	}
 	if (count != 0)
 		return (0);

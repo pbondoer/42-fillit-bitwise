@@ -6,14 +6,13 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/15 17:41:37 by pbondoer          #+#    #+#             */
-/*   Updated: 2016/03/06 07:14:55 by pbondoer         ###   ########.fr       */
+/*   Updated: 2017/01/18 00:22:14 by lemon            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fcntl.h>
 #include "libft.h"
 #include "fillit.h"
-#include <stdio.h>
 
 /*
 ** Allocates an empty map string to populate with our pieces.
@@ -90,16 +89,16 @@ int		die(char *str)
 int		main(int argc, char **argv)
 {
 	t_etris		tetris[MAX_TETRI + 1];
-	short		map[16];
+	uint16_t	map[16];
 	int			count;
 	int			size;
 
 	if (argc != 2)
-		return (die("usage: fillit input_file"));
+		return (die("usage: ./fillit [input_file]"));
 	ft_bzero(tetris, sizeof(t_etris) * (MAX_TETRI + 1));
 	if ((count = read_tetri(open(argv[1], O_RDONLY), tetris)) == 0)
 		return (die("error"));
-	ft_bzero(map, sizeof(short) * 16);
+	ft_bzero(map, sizeof(uint16_t) * 16);
 	if ((size = solve(tetris, count, map)) == 0)
 		return (die("error"));
 	print(tetris, count, size);

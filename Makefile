@@ -6,7 +6,7 @@
 #    By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/05 02:12:10 by pbondoer          #+#    #+#              #
-#    Updated: 2016/03/06 04:39:29 by pbondoer         ###   ########.fr        #
+#    Updated: 2017/01/18 01:01:58 by lemon            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRC		= main.c \
 OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))
 
 CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror
+CFLAGS	= -Wall -Wextra -Werror -O3 -march=native
 
 LIBFT	= ./libft/libft.a
 LIBINC	= -I./libft
@@ -43,7 +43,7 @@ $(LIBFT):
 	make -C ./libft
 
 $(NAME): $(OBJ)
-	$(CC) $(LIBLINK) -o $(NAME) $(OBJ)
+	$(CC) -o $(NAME) $(OBJ) $(LIBLINK)
 
 clean:
 	rm -rf $(OBJDIR)
