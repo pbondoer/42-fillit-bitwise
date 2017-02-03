@@ -6,13 +6,13 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/15 17:43:27 by pbondoer          #+#    #+#             */
-/*   Updated: 2017/01/18 00:56:15 by lemon            ###   ########.fr       */
+/*   Updated: 2017/02/03 01:04:37 by pbondoer         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */ 
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include "libft.h"
 #include "fillit.h"
-#include <stdio.h>
 
 /*
 ** Utility function to get min-max values for get_piece.
@@ -24,7 +24,8 @@ void	min_max(const char *str, char *m)
 	unsigned char i;
 
 	i = 0;
-	m[0] = 3; m[1] = 0;
+	m[0] = 3;
+	m[1] = 0;
 	m[2] = 3;
 	m[3] = 0;
 	while (i < 20)

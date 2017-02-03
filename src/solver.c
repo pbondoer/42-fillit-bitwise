@@ -6,9 +6,9 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 15:19:32 by pbondoer          #+#    #+#             */
-/*   Updated: 2017/01/18 00:57:29 by lemon            ###   ########.fr       */
+/*   Updated: 2017/02/03 01:11:14 by pbondoer         ###   ########.fr       */
 /*                                                                            */
-/* ****************************************************************************/
+/* ************************************************************************** */
 
 #include <string.h>
 #include "libft.h"
@@ -64,7 +64,7 @@ int			solve_map(t_etris *tetris, const int size, uint16_t *map)
 }
 
 /*
-* Tries to solve maps starting from the smallest possible size.
+** Tries to solve maps starting from the smallest possible size.
 */
 
 int			solve(t_etris *tetris, const int count, uint16_t *map)
