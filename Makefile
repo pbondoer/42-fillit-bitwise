@@ -6,7 +6,7 @@
 #    By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/05 02:12:10 by pbondoer          #+#    #+#              #
-#    Updated: 2017/01/18 01:01:58 by lemon            ###   ########.fr        #
+#    Updated: 2017/02/03 01:48:38 by pbondoer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ SRC		= main.c \
 OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))
 
 CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror -O3 -march=native
+CFLAGS	= -Wall -Wextra -Werror -g
+#CFLAGS += -O3 -march=native -pipe
 
 LIBFT	= ./libft/libft.a
 LIBINC	= -I./libft
@@ -51,4 +52,6 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 
-re: fclean all
+re:
+	@$(MAKE) fclean --no-print-directory
+	@$(MAKE) all --no-print-directory

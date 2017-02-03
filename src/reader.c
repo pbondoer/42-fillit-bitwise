@@ -6,7 +6,7 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/15 17:43:27 by pbondoer          #+#    #+#             */
-/*   Updated: 2017/02/03 01:04:37 by pbondoer         ###   ########.fr       */
+/*   Updated: 2017/02/03 01:51:47 by pbondoer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,12 @@ t_etris	get_piece(const char *str, const char id)
 	int		x;
 	int		y;
 
-	min_max(str, &(m[0]));
+	min_max(str, m);
 	tetris.width = m[1] - m[0] + 1;
 	tetris.height = m[3] - m[2] + 1;
 	tetris.id = id;
 	tetris.value = 0;
+	tetris.last = NULL;
 	y = 0;
 	while (y < tetris.height)
 	{
@@ -158,7 +159,7 @@ int		read_tetri(const int fd, t_etris *tetris)
 	while ((count = read(fd, buf, 21)) >= 20)
 	{
 		if (check_counts(buf, count) != 0)
-			return (1);
+			return (0);
 		tetris[i] = get_piece(buf, cur++);
 		j = i - 1;
 		while (j >= 0)

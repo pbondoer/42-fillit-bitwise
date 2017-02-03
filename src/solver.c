@@ -6,13 +6,14 @@
 /*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/02/02 15:19:32 by pbondoer          #+#    #+#             */
-/*   Updated: 2017/02/03 01:11:14 by pbondoer         ###   ########.fr       */
+/*   Updated: 2017/02/03 02:11:59 by pbondoer         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include "libft.h"
 #include "fillit.h"
+#include <stdio.h>
 
 /*
 ** Checks for a piece
@@ -42,11 +43,11 @@ int			solve_map(t_etris *tetris, const int size, uint16_t *map)
 
 	if (tetris->id == 0)
 		return (1);
-	pos = (tetris->last ? (tetris->last->x + tetris->last->y * size + 1) : 0);
+	pos = (tetris->last ? (tetris->last->x + tetris->last->y * size) : 0);
 	tetris->y = pos / size;
 	while (tetris->y <= size - tetris->height)
 	{
-		tetris->x = pos % size;
+		tetris->x = (tetris->y == pos / size ? pos % size : 0);
 		while (tetris->x <= size - tetris->width)
 		{
 			if (check_piece(tetris, map))
@@ -60,6 +61,8 @@ int			solve_map(t_etris *tetris, const int size, uint16_t *map)
 		}
 		tetris->y++;
 	}
+	tetris->x = 0;
+	tetris->y = 0;
 	return (0);
 }
 
