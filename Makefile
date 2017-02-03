@@ -6,48 +6,49 @@
 #    By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/05 02:12:10 by pbondoer          #+#    #+#              #
-#    Updated: 2017/02/03 01:48:38 by pbondoer         ###   ########.fr        #
+#    Updated: 2017/02/03 09:55:50 by pbondoer         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= fillit 
+NAME	:= fillit 
 
-SRC		= main.c \
-		  reader.c \
-		  solver.c
+# directories
+SRC_DIR	:= ./src
+INC_DIR	:= ./includes
+OBJ_DIR	:= ./obj
+LIB_DIR	:= ./lib
 
-OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))
+# src / obj files
+SRC		:= main.c \
+		   reader.c \
+		   solver.c
+OBJ		:= $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
 
-CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror -g
-#CFLAGS += -O3 -march=native -pipe
+# compiler and flags
+CC		:= gcc
+CFLAGS	:= -Wall -Wextra -Werror
+CFLAGS	+= -O3 -march=native -pipe
 
-LIBFT	= ./libft/libft.a
-LIBINC	= -I./libft
-LIBLINK	= -L./libft -lft
+# libraries
+L_FT	:= $(LIB_DIR)/libft
 
-SRCDIR	= ./src/
-INCDIR	= ./includes/
-OBJDIR	= ./obj/
+include $(L_FT)/libft.mk
 
-all: obj libft $(NAME)
+.PHONY: all clean fclean re
 
-obj:
-	mkdir -p $(OBJDIR)
+all:
+	mkdir -p $(OBJ_DIR)
+	@$(MAKE) -C $(L_FT) --no-print-directory
+	@$(MAKE) $(NAME) --no-print-directory
 
-$(OBJDIR)%.o:$(SRCDIR)%.c
-	$(CC) $(CFLAGS) $(LIBINC) -I $(INCDIR) -o $@ -c $<
-
-libft: $(LIBFT)
-
-$(LIBFT):
-	make -C ./libft
+$(OBJ_DIR)/%.o:$(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(LIB_INC) -I $(INC_DIR) -o $@ -c $<
 
 $(NAME): $(OBJ)
-	$(CC) -o $(NAME) $(OBJ) $(LIBLINK)
+	$(CC) $(OBJ) $(LIB_LNK) -o $(NAME)
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -rf $(NAME)
@@ -55,3 +56,7 @@ fclean: clean
 re:
 	@$(MAKE) fclean --no-print-directory
 	@$(MAKE) all --no-print-directory
+
+relibs:
+	@$(MAKE) -C $(L_FT) re --no-print-directory
+	@$(MAKE) re --no-print-directory
